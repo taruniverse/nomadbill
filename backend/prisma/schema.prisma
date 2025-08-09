@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String      @unique
+  mobile     String      @db.String // better than Float for phone numbers
+  password   String
+  country    String?
+  currency   String?
+  language   String?
+  clients    Client[]    @relation("UserClients")
+  invoices   Invoice[]   @relation("UserInvoices")
+  taxDetails TaxDetail[] @relation("UserTaxDetails")
+  createdAt  DateTime    @default(now())
+}
+
+model TaxDetail {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  country   String
+  taxId     String
+  createdAt DateTime @default(now())
+  user      User     @relation("UserTaxDetails", fields: [userId], references: [id])
+}
+
+model Client {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  name      String
+  email     String
+  company   String?
+  address   String?
+  createdAt DateTime  @default(now())
+  user      User      @relation("UserClients", fields: [userId], references: [id])
+  Invoice   Invoice[]
+}
+
+model Invoice {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String    @db.ObjectId
+  clientId String    @db.ObjectId
+  status   String // e.g., "draft", "sent", "paid", "overdue"
+  amount   Float
+  currency String
+  items    Json // Array of items [{ name, qty, rate, tax }]
+  notes    String?
+  issuedAt DateTime  @default(now())
+  dueDate  DateTime?
+  user     User      @relation("UserInvoices", fields: [userId], references: [id])
+  client   Client    @relation(fields: [clientId], references: [id])
+}

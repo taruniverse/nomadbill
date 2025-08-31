@@ -1,10 +1,10 @@
 import Image from "next/image";
 import React from "react";
-import Google from "../../public/google.webp";
-import Apple from "../../public/apple.webp";
-import Email from "../../public/icons/email.svg";
-import Password from "../../public/icons/password.svg";
-import LoginImg from "../../public/login.png";
+import Google from "../../../public/google.webp";
+import Apple from "../../../public/apple.webp";
+import Email from "../../../public/icons/email.svg";
+import Password from "../../../public/icons/password.svg";
+import LoginImg from "../../../public/login.png";
 import {
   buttonPrimary,
   input,
